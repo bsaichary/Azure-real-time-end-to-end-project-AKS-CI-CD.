@@ -14,10 +14,11 @@ Steps:
 11. Login to AKS (az aks get-credentials --resource-group "resource_group_name" --name "AKS_cluster")
 12. Install ArgoCD package using provided bash Script.
 13. Login to ArgoCD.
-14. Configure Azure Repository with ArgoCD.
-15. Connect AKS with ArgoCD.
+14.   -> Configure Azure Repository with ArgoCD.
+15.   -> Connect AKS with ArgoCD. (ArgoCd will auto deploy the code to cluster once connected)
 16. Writing bash script to auto update the manifest files with latest image builds through CI.
-17. 
-18. 
-19. 
-20. 
+
+Now Let's get started.
+
+
+
