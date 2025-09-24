@@ -1,6 +1,5 @@
 # Azure Real Time End-To-End-Project-AKS-CI-CD.
-This project deals with Aks, Docker, Azure container registry, CI/CD deployment through Argocd. This Repo includes detailed practical guide for those who are looking to practice complete end to end real time project.
-Complete End to End Project with detailed guide for practice. (Aks, Docker, Azure container registry, CI/CD deployment through Argocd).
+Complete End to End Azure Project with detailed guide for practice. (Aks, Docker, Azure container registry, CI/CD deployment through Argocd).
 
 Steps:
 1. Create a Project in Azure DevOps Organization.
