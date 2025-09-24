@@ -19,6 +19,18 @@ Steps:
 16. Writing bash script to auto update the manifest files with latest image builds through CI.
 
 # Now Let's get started.
+The Architecture diagram of the Project.
+
+<img width="700" height="334" alt="Architecture diagram" src="https://github.com/user-attachments/assets/897119d2-f5fe-4139-8b54-727454d6b602" />
+
+**Project Description**
+This is a Micro-service based application used for Voting Purpose where the users will cast their votes through web interface
+Tech Stacks:
+Python
+Node.js
+Redis
+PostgreSQL.
+
 
 
 
