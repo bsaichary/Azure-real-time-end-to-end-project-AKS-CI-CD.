@@ -57,7 +57,7 @@ Once your Project is created it will look like this.
 <img width="1912" height="877" alt="image" src="https://github.com/user-attachments/assets/280ddac1-0f59-45b5-ad55-21dcf7ddc364" />
 
 
-**Import GitHub repo to Azure Repo**:
+## **Step2: Import GitHub repo to Azure Repo**:
 
 Go to your project -> Click Repos -> click Import -> copy & paste this url: https://github.com/dockersamples/example-voting-app.git -> click Import.
 
@@ -66,6 +66,30 @@ Go to your project -> Click Repos -> click Import -> copy & paste this url: http
 Once your click Import the code will be imported into your Azure repos from GitHub.
 
 <img width="1788" height="853" alt="image" src="https://github.com/user-attachments/assets/1c711684-a1ac-4da2-bd4f-31009024ac0b" />
+
+## **Step3: Create Azure Container Registry**
+
+We will store our Docker Containers in this Registry after Building them using CI Pipeline in Azure DevOps.
+
+Login to Azure Portal url: https://portal.azure.com 
+Search Container registry -> Click Create 
+
+<img width="700" height="332" alt="image" src="https://github.com/user-attachments/assets/7fb4f86b-0244-44fc-b18c-6514e987b6ec" />
+
+Provide details: Resource group name, Registry name, location, Click Review + create, create. (Rest all leave for default values).
+
+<img width="713" height="423" alt="image" src="https://github.com/user-attachments/assets/673b7b0b-3c44-408a-a83d-b0c05cfbe2f1" />
+
+Go to your created container registry -> settings -> access key -> check mark the admin user. 
+
+<img width="1546" height="801" alt="image" src="https://github.com/user-attachments/assets/fbf2afad-68cf-4312-be79-be35e3f6b33b" />
+
+
+
+
+
+
+
 
 
 
