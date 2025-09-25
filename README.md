@@ -35,12 +35,13 @@ Steps:
 
 ## **Step1: Create Azure DevOps Organization & Project**
 Login to your Azure DevOps portal url: https://dev.azure.com then create a Organization and Project.
-if your creating a project for first time then first you need to create a Organization becoz your project will be under the organization.
+if your creating a project for first time then first you need to create a Organization because your project will be inside the organization.
 
 **Create Organization**: 
 click on New Organization -> Click Continue -> give name to Organization & enter captcha -> click continue.
 
 <img width="1915" height="834" alt="image" src="https://github.com/user-attachments/assets/dbacb6d2-8b15-4065-b240-ae29878d649a" />
+
 
 Once your done creating organization it will look as shown in below highlighted screenshot. 
 
@@ -49,11 +50,15 @@ Give name to Project -> Click create.
 
 <img width="1913" height="866" alt="image" src="https://github.com/user-attachments/assets/1b7ce79a-9e0a-4b3d-b7dc-f5c77feeef03" />
 
-Once your Project is created it will look like this
+
+Once your Project is created it will look like this.
+
 
 <img width="1912" height="877" alt="image" src="https://github.com/user-attachments/assets/280ddac1-0f59-45b5-ad55-21dcf7ddc364" />
 
+
 **Import GitHub repo to Azure Repo**:
+
 Go to your project -> Click Repos -> click Import -> copy & paste this url: https://github.com/dockersamples/example-voting-app.git -> click Import.
 
 <img width="1805" height="834" alt="image" src="https://github.com/user-attachments/assets/dcd82c3a-e400-4bd6-8680-1ba600b75305" />
