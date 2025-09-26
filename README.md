@@ -92,7 +92,12 @@ Go to your created container registry -> settings -> access key -> check mark th
 
 First we will create a linux virtual machine then we will setup the self hosted agent and also install docker as it is a dependency for building images.  
 
-Go to -> Azure portal -> search virtual machine -> open virtual machine -> click create -> virtual machine -> give **resource group** name (else click create new) -> **virtual machine** name.
+Go to -> **Azure portal** -> search **virtual machine** -> open **virtual machine** -> 
+
+<img width="1919" height="566" alt="image" src="https://github.com/user-attachments/assets/f796b694-fe87-497c-824e-7048584c43ad" />
+
+
+click create -> virtual machine -> give **resource group** name (else click create new) -> **virtual machine** name.
 
 <img width="1174" height="803" alt="image" src="https://github.com/user-attachments/assets/4e4c1734-0756-4f27-982a-406eca003e24" />
 
@@ -107,7 +112,7 @@ scroll down -> **image** choose ubuntu server 22.04 LTS -> **size** choose Stand
 <img width="1236" height="818" alt="image" src="https://github.com/user-attachments/assets/24aa6315-2a20-42b7-bdea-1c4df2d0bb7f" />
 
 
-<img width="1919" height="566" alt="image" src="https://github.com/user-attachments/assets/f796b694-fe87-497c-824e-7048584c43ad" />
+
 
 
 
