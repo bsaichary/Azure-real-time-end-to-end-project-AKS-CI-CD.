@@ -91,7 +91,14 @@ Go to your created container registry -> settings -> access key -> check mark th
 ## **Step4: Stepup Self Hosted Agent for running pipeline**
 
 First we will create a linux virtual machine then we will setup the self hosted agent and also install docker as it is a dependency for building images.  
-to get the step to create vm use this link README.md 
+Steps to create vm use this link https://github.com/bsaichary/Azure-Linux-Virtual-Machine-Creation-detail-guide/blob/main/README.md 
+
+
+after creation of virtual machine, setting up selfhost agent and install docker follow the step 5.
+
+## **Step5: Building CI Pipeline in azure devops
+
+
 
 
 
