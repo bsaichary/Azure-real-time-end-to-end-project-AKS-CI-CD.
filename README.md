@@ -201,6 +201,8 @@ To see them go to Azure Portal -> Container Registry -> Service (left side pane)
 
 <img width="1854" height="775" alt="image" src="https://github.com/user-attachments/assets/07baabfc-acc3-4a59-8dae-304eb17351d2" />
 
+## **Step5: Create Azure Kubernetes Service**
+
 
 
 
