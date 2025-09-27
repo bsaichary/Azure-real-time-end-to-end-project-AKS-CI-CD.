@@ -196,7 +196,8 @@ once it is completed you can see the completed pipeline run in you pipeline sect
 similarly Now build the pipelines for other two microservices **vote** and **worker** by repeating the **Step5**
 
 Now you can see all the images are build and pushed to Azure Container Registry.
-Azure Portal -> Container Registry -> Service (left side pane) -> Repositories -> your images (containers).
+
+To see them go to Azure Portal -> Container Registry -> Service (left side pane) -> Repositories -> your images (containers).
 
 <img width="1854" height="775" alt="image" src="https://github.com/user-attachments/assets/07baabfc-acc3-4a59-8dae-304eb17351d2" />
 
