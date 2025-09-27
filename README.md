@@ -94,9 +94,29 @@ First we will create a linux virtual machine then we will setup the self hosted 
 Steps to create vm use this link https://github.com/bsaichary/Azure-Linux-Virtual-Machine-Creation-detail-guide/blob/main/README.md 
 
 
-after creation of virtual machine, setting up selfhost agent and install docker follow the step 5.
+after creation of virtual machine, setting up selfhost agent and install docker.
 
 ## **Step5: Building CI Pipeline in azure devops
+With this CI pipeline we are going to build the code and create docker images using DockerFile which is present in Repository and finally pushing those created images to Azure Container Registry.
+
+To create a CI Pipeline go to **Azure DevOps portal** -> **your organization** (red box mark) -> **your project** (green box mark) -> on the left side pane click on **pipelines** -> click on **create pipeline**
+
+
+<img width="1903" height="875" alt="image" src="https://github.com/user-attachments/assets/d5d12302-a558-40e3-9991-fe8a6db359e4" />
+
+
+now click on **Azure Repo Git yaml** this means we are choosing our Azure devops repository where we have imported the repository in **Step2** and we are using yaml based pipeline.
+
+<img width="1919" height="885" alt="image" src="https://github.com/user-attachments/assets/a7c64135-cbc8-4dce-afb0-79c87657683d" />
+
+
+
+
+<img width="1913" height="896" alt="image" src="https://github.com/user-attachments/assets/e505fc67-1e3b-4f15-a62e-a274aba80f19" />
+
+
+
+
 
 
 
