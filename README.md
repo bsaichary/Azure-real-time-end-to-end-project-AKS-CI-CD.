@@ -189,7 +189,7 @@ Now click on save and run -> click save and run again. The pipeline will start r
 <img width="700" height="139" alt="image" src="https://github.com/user-attachments/assets/7300e82c-74bc-49ed-8320-d83dc0ad5581" />
 
 
-once it is completed you can see the completed pipeline run in you pipeline section. i have created all the pipelines.
+once it is completed you can see the completed pipeline run in you pipeline section. Here you can see i have created pipelines for other two microservices.
 
 <img width="947" height="403" alt="image" src="https://github.com/user-attachments/assets/c85362b3-1a25-4ca8-8c1e-80cf1d51efd1" />
 
