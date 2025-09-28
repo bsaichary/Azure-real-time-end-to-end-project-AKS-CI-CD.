@@ -203,6 +203,54 @@ To see them go to Azure Portal -> Container Registry -> Service (left side pane)
 
 ## **Step5: Create Azure Kubernetes Service**
 
+We will create a Azure Kubernetes cluster for deploying our application using ArgoCD.
+
+In the Azure portal -> In search bar type Azure kubernetes cluster -> open kubernetes services.
+
+<img width="1884" height="761" alt="image" src="https://github.com/user-attachments/assets/29c20021-d66f-485c-879e-6f8a34a91315" />
+
+
+then on Click create -> then click on kubernetes cluster. 
+
+<img width="1885" height="636" alt="image" src="https://github.com/user-attachments/assets/702ee82e-6914-4d08-a0b2-ce42e0e99264" />
+
+
+provide Resource group name, kubernetes cluster name, location (can use default location also) if you face any resource limit error while creating then change the location and try again -> then in the node pool section choose click on the agent pool change the minimum and maximum node count to 1 and 2 -> in the optional settings enable the public ip per node -> then click on update -> then click review + create -> create. leave all other details default. it will take 2 -3 minutes to create it.
+
+
+<img width="1124" height="815" alt="image" src="https://github.com/user-attachments/assets/126a7783-8b02-4f0a-bfd2-1e1cd1829056" />
+
+
+## **Step6: Install Azure CLI and setu up AKS using CLI.
+
+The Azure CLI is a tool we use to manage the Azure resources through command line (terminal).
+Now, login to the linux virtual machine which we have created and install the Azure CLI, just copy and paste the below script and then click enter.
+
+```
+# Update the package list and install necessary dependencies
+sudo apt-get update
+
+# Step 1: Install Azure CLI
+echo "Installing Azure CLI..."
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+
+
+Now, from the Virtual machine login to your azure portal using the below command then follow the steps.
+
+```
+# Step 2: Log in to Azure
+az login --use-device-code
+```
+once you execute this command it will prompt you to choose email id choose the one which you have used have used while creating azure fee subscription, then in the terminal it will show url and authentication code. take the url and browse it then copy paste the authenticatio code.
+
+<img width="700" height="64" alt="image" src="https://github.com/user-attachments/assets/43ba936c-fe67-4edd-a5fd-4f67c37ea6bd" />
+
+
+
+
+
+
 
 
 
