@@ -230,21 +230,50 @@ Now, login to the linux virtual machine which we have created and install the Az
 # Update the package list and install necessary dependencies
 sudo apt-get update
 
-# Step 1: Install Azure CLI
+# Install Azure CLI
 echo "Installing Azure CLI..."
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 
-
 Now, from the Virtual machine login to your azure portal using the below command then follow the steps.
 
 ```
-# Step 2: Log in to Azure
+# Log in to Azure portal using command prompt
 az login --use-device-code
 ```
-once you execute this command it will prompt you to choose email id choose the one which you have used have used while creating azure fee subscription, then in the terminal it will show url and authentication code. take the url and browse it then copy paste the authenticatio code.
+once you execute this command it will prompt you to choose email id choose the one which you have used have used while creating azure fee subscription, then in the terminal it will show url and authentication code. take the url and browse it then copy paste the authentication code.
 
 <img width="700" height="64" alt="image" src="https://github.com/user-attachments/assets/43ba936c-fe67-4edd-a5fd-4f67c37ea6bd" />
+
+**Install kubectl** 
+now install kubectl using command
+```
+sudo az aks install-cli
+```
+
+now login to AKS using command
+```
+az aks get-credentails --resource-group **resourcegroup** --name **aksname**
+replace your Azure kubernetes resource group and kubernetes cluster name at above bold words.
+
+to verify the connection to aks cluster use this command
+
+**kubectl config current-context**
+this command will show you to which aks cluster it is connected.
+
+<img width="444" height="67" alt="image" src="https://github.com/user-attachments/assets/a392f45c-0880-40d8-b1de-547fa4020254" />
+
+so, now we have successfully connected to our kubernetes cluster.
+
+## **Step7: Install ArgoCD**
+
+we will use a bash script to install argocd.
+the bash script will first creates a namespace and then install argocd in the namespace then it will wait for argocd components to get ready, then it retrieves initail admin password for argocd later it exposes the argocd server to the internet using node port service which we can access via browser (url). and optionally it installs the argocd cli and logs in using the initial admin password.
+
+create a file and copy paste the 
+
+
+
 
 
 
