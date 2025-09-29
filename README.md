@@ -327,7 +327,7 @@ How to Use:
 3. Run the script: ./argocd.sh
 4. This will set up Argo CD on your Kubernetes cluster and provide you with the necessary details to access and manage it.
 
-## **Step8: setup portrule for ArgoCD.
+## **Step8: setup port rule for ArgoCD.
 now run this command **kubectl get svc -n argocd** it will list out the services in the kubernetes. from the output we can see the nodeport port number that we should allow in azure vmss networking in inbound port rule then we can access it on the browser by using the IP address of our VM and the port address of port 80 service which is 31436 as shown below.
 
 <img width="700" height="387" alt="image" src="https://github.com/user-attachments/assets/d520f5fe-7bb3-45b6-85ae-2f16fc95ec1d" />
@@ -335,25 +335,131 @@ now run this command **kubectl get svc -n argocd** it will list out the services
 
 <img width="700" height="116" alt="image" src="https://github.com/user-attachments/assets/7e918d5d-535e-4572-96b2-fb825cd744e2" />
 
+## ** Step9: login to the ArgoCD**
+
 go to browser and with your ip address and port number search it (example: http://52.250.58.123:31436)
 
 <img width="700" height="453" alt="image" src="https://github.com/user-attachments/assets/a364336e-ee87-426a-86fa-db6fad090bc8" />
 
-Now to login to the ArgoCD, we need login and password. 
+
 login = admin (default)
 but password we need to fetch it from argocd installation of initial admin secret. follow the steps to get the password.
 
-run this command **kubectl get secret -n argocd**
+run this command in terminal
+```
+kubectl get secret -n argocd
+```
 
 <img width="566" height="158" alt="image" src="https://github.com/user-attachments/assets/b47a9438-f87a-49f4-8fea-da7ea5f3adca" />
 
-now run this command **kubectl edit argocd-initial-admin-secret -n argocd**
+now run this command in terminal
+```
+kubectl edit argocd-initial-admin-secret -n argocd
+```
 
 <img width="700" height="273" alt="image" src="https://github.com/user-attachments/assets/1c78ee50-35a4-4c0f-aac4-7d11b7ad6011" />
 
 from this you will get the encoded password take it and keep it in the below command (<the argoCD password> replace this with password) and run it, it will give you actual password. (notedown the password somewhere)
 
+```
 echo <the argoCD password> | base64 --decode
+```
+
+now use this decrypted password and username admin to login to ArgoCD.
+afer login, you will see something like this.
+
+<img width="940" height="475" alt="image" src="https://github.com/user-attachments/assets/45dc738a-1564-42a5-b5f3-033a38b01941" />
+
+
+## **Step10: Configure ArgoCD**
+
+Now we have to configure the ArgoCD, so that it will always obverse the azure repo manifests files. when the configuration is completed it will automatically deploy the manifest files to kubernetes cluster, but then why it still observes it continusly because when there is a new change in application then it will deploy the new changes to cluster automatically. 
+
+To configure the argocd, first we need to connect argocd to azure repo. 
+first, take the clone url, 
+Azure DevOps portal -> project -> repository -> click on clone -> copy the url.
+
+<img width="1802" height="822" alt="image" src="https://github.com/user-attachments/assets/542f2aae-dc86-44ea-9d64-e1069f9b90d7" />
+
+Now create a Pat token in azure devops.
+devops portal -> user settings (top right corner) -> Personal access token -> click create new (top right corner) -> give a name -> check full access -> click create. 
+note: notedown the token it will be visible only once.
+
+<img width="1883" height="700" alt="image" src="https://github.com/user-attachments/assets/f18d96ec-fdcc-44e4-9f8c-e241a52dedd8" />
+
+<img width="1797" height="818" alt="image" src="https://github.com/user-attachments/assets/171e8aa2-e0f5-4876-9300-5261542a916e" />
+
+now, go to web browser argocd.
+click settings -> click connect -> connection method choose via https/http -> project default -> repository url (this is the combinatio of pat token and clone url) -> click connect.
+
+<img width="1916" height="566" alt="image" src="https://github.com/user-attachments/assets/369b16d7-0665-4d43-9ee3-64f084bae780" />
+
+make sure the connection status should be successfull, otherwise ensure your are properly using pat token and clone url.
+
+now, ArgoCd -> Application (left side pane) -> new application -> give a name to application -> project select default -> sync policy choose automatic -> for repo url source choose azure repo url which we added earlier, click drop down it will appear -> path type k8s-specifications -> namespace choose default -> then click create. 
+now the argocd will automatically deploys the manifest files to kubernetes cluster and you can see pods running from terminal using command **kubectl get pods -n argocd**
+
+<img width="700" height="77" alt="image" src="https://github.com/user-attachments/assets/c567e258-9531-4156-9160-7289fed15205" />
+
+
+the argocd will always watches this manifest files for any changes and it will deploy them.
+
+<img width="700" height="333" alt="image" src="https://github.com/user-attachments/assets/08334844-0578-4384-b49d-9937a5322e53" />
+
+now, after deploying we can see the pods are running (UI mode in argocd)
+
+<img width="700" height="394" alt="image" src="https://github.com/user-attachments/assets/7b0a2301-2ad2-48b7-88fe-d3002ce6418c" />
+
+till here we have completed the application deployment to azure kubernetes cluster.
+
+but now as a devops engineer we need to make this into automation process for future changes, here the when you run the CI pipeline new containers will be stored in Azure container registry so then how the manifest files will be updated with new container infomation like **image name, image tag and deployment file prefix**  
+
+So, here we will write a bash script and include that bash script in Azure devops repo -> vote -> file. so it will do this tasks of updating image information in manifest files from there argocd will take care.
+
+```
+#!/bin/bash
+
+set -x
+
+# Set the repository URL
+REPO_URL="https://<ACCESS-TOKEN>@dev.azure.com/GabrielOkom/votingApp/_git/votingApp"
+
+# Clone the git repository into the /tmp directory
+git clone "$REPO_URL" /tmp/temp_repo
+
+# Navigate into the cloned repository directory
+cd /tmp/temp_repo
+
+# Make changes to the Kubernetes manifest file(s)
+# For example, let's say you want to change the image tag in a deployment.yaml file
+sed -i "s|image:.*|image: <ACR NAME>/$2:$3|g" k8s-specifications/$1-deployment.yaml
+
+# Add the modified files
+git add .
+
+# Commit the changes
+git commit -m "Update Kubernetes manifest"
+
+# Push the changes back to the repository
+git push
+
+# Cleanup: remove the temporary directory
+rm -rf /tmp/temp_repo
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
