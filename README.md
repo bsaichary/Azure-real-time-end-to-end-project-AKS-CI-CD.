@@ -322,10 +322,38 @@ Step 4: Exposes the Argo CD server using a NodePort service type, making it acce
 Step 5: Optionally installs the Argo CD CLI and logs in using the initial admin password.
 
 How to Use:
-Save this script to a file, for example, argocd.sh
-Make the script executable: chmod +x argocd.sh
-Run the script: ./install-argo-cd.sh.
-This will set up Argo CD on your Kubernetes cluster and provide you with the necessary details to access and manage it.
+1. Save this script to a file, for example argocd.sh
+2. Make the script executable: chmod +x argocd.sh
+3. Run the script: ./argocd.sh
+4. This will set up Argo CD on your Kubernetes cluster and provide you with the necessary details to access and manage it.
+
+## **Step8: setup portrule for ArgoCD.
+now run this command **kubectl get svc -n argocd** it will list out the services in the kubernetes. from the output we can see the nodeport port number that we should allow in azure vmss networking in inbound port rule then we can access it on the browser by using the IP address of our VM and the port address of port 80 service which is 31436 as shown below.
+
+<img width="700" height="387" alt="image" src="https://github.com/user-attachments/assets/d520f5fe-7bb3-45b6-85ae-2f16fc95ec1d" />
+
+
+<img width="700" height="116" alt="image" src="https://github.com/user-attachments/assets/7e918d5d-535e-4572-96b2-fb825cd744e2" />
+
+go to browser and with your ip address and port number search it (example: http://52.250.58.123:31436)
+
+<img width="700" height="453" alt="image" src="https://github.com/user-attachments/assets/a364336e-ee87-426a-86fa-db6fad090bc8" />
+
+Now to login to the ArgoCD, we need login and password. 
+login = admin (default)
+but password we need to fetch it from argocd installation of initial admin secret. follow the steps to get the password.
+
+run this command **kubectl get secret -n argocd**
+
+<img width="566" height="158" alt="image" src="https://github.com/user-attachments/assets/b47a9438-f87a-49f4-8fea-da7ea5f3adca" />
+
+now run this command **kubectl edit argocd-initial-admin-secret -n argocd**
+
+<img width="700" height="273" alt="image" src="https://github.com/user-attachments/assets/1c78ee50-35a4-4c0f-aac4-7d11b7ad6011" />
+
+from this you will get the encoded password take it and keep it in the below command (<the argoCD password> replace this with password) and run it, it will give you actual password. (notedown the password somewhere)
+
+echo <the argoCD password> | base64 --decode
 
 
 
