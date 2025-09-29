@@ -260,6 +260,7 @@ to verify the connection to aks cluster use this command
 
 **kubectl config current-context**
 this command will show you to which aks cluster it is connected.
+```
 
 <img width="444" height="67" alt="image" src="https://github.com/user-attachments/assets/a392f45c-0880-40d8-b1de-547fa4020254" />
 
@@ -270,7 +271,61 @@ so, now we have successfully connected to our kubernetes cluster.
 we will use a bash script to install argocd.
 the bash script will first creates a namespace and then install argocd in the namespace then it will wait for argocd components to get ready, then it retrieves initail admin password for argocd later it exposes the argocd server to the internet using node port service which we can access via browser (url). and optionally it installs the argocd cli and logs in using the initial admin password.
 
-create a file and copy paste the 
+create a file with name **argocd.sh** and copy paste the below content in to the file and execute the file.
+
+```
+#!/bin/bash
+
+# Step 1: Install Argo CD
+echo "Installing Argo CD..."
+
+# Create a namespace for Argo CD
+kubectl create namespace argocd
+
+# Install Argo CD in the argocd namespace
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Step 2: Wait for all Argo CD components to be up and running
+echo "Waiting for Argo CD components to be ready..."
+kubectl wait --for=condition=Ready pods --all -n argocd --timeout=600s
+
+# Step 3: Get the initial admin password
+echo "Retrieving the Argo CD initial admin password..."
+ARGOCD_INITIAL_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+echo "Argo CD initial admin password: $ARGOCD_INITIAL_PASSWORD"
+
+# Step 4: Access the Argo CD server
+echo "Exposing Argo CD server via NodePort..."
+kubectl -n argocd patch svc argocd-server -p '{"spec": {"type": "NodePort"}}'
+
+# Retrieve the Argo CD server URL
+ARGOCD_SERVER=$(kubectl -n argocd get svc argocd-server -o jsonpath='{.spec.clusterIP}')
+ARGOCD_PORT=$(kubectl -n argocd get svc argocd-server -o jsonpath='{.spec.ports[0].nodePort}')
+echo "You can access the Argo CD server at http://$ARGOCD_SERVER:$ARGOCD_PORT"
+
+# Step 5: Login to Argo CD CLI (Optional)
+echo "Installing Argo CD CLI..."
+sudo curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+sudo chmod +x /usr/local/bin/argocd
+
+echo "Logging into Argo CD CLI..."
+argocd login $ARGOCD_SERVER:$ARGOCD_PORT --username admin --password $ARGOCD_INITIAL_PASSWORD --insecure
+
+echo "Argo CD installation and setup complete!"
+```
+
+Script Overview:
+Step 1: Installs Argo CD in a namespace called argocd.
+Step 2: Waits for all Argo CD components to be ready.
+Step 3: Retrieves the initial admin password for Argo CD.
+Step 4: Exposes the Argo CD server using a NodePort service type, making it accessible via a URL.
+Step 5: Optionally installs the Argo CD CLI and logs in using the initial admin password.
+
+How to Use:
+Save this script to a file, for example, argocd.sh
+Make the script executable: chmod +x argocd.sh
+Run the script: ./install-argo-cd.sh.
+This will set up Argo CD on your Kubernetes cluster and provide you with the necessary details to access and manage it.
 
 
 
