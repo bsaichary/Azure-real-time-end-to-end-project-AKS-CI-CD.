@@ -396,7 +396,7 @@ click settings -> click connect -> connection method choose via https/http -> pr
 
 make sure the connection status should be successfull, otherwise ensure your are properly using pat token and clone url.
 
-now, ArgoCd -> Application (left side pane) -> new application -> give a name to application -> project select default -> sync policy choose automatic -> for repo url source choose azure repo url which we added earlier, click drop down it will appear -> path type k8s-specifications -> namespace choose default -> then click create. 
+Now, ArgoCd -> Application (left side pane) -> new application -> give a name to application -> project select default -> sync policy choose automatic -> for repo url source choose azure repo url which we added earlier, click drop down it will appear -> path type k8s-specifications -> namespace choose default -> then click create. 
 now the argocd will automatically deploys the manifest files to kubernetes cluster and you can see pods running from terminal using command **kubectl get pods -n argocd**
 
 <img width="700" height="77" alt="image" src="https://github.com/user-attachments/assets/c567e258-9531-4156-9160-7289fed15205" />
@@ -412,9 +412,10 @@ now, after deploying we can see the pods are running (UI mode in argocd)
 
 till here we have completed the application deployment to azure kubernetes cluster.
 
-but now as a devops engineer we need to make this into automation process for future changes, here the when you run the CI pipeline new containers will be stored in Azure container registry so then how the manifest files will be updated with new container infomation like **image name, image tag and deployment file prefix**  
+## Step11: **Writing Bash Script**
+Now as a devops engineer we need to make this into automation process for future changes to be auto updated, when you run the CI pipeline new containers will be created and pushed into Azure container registry, so then how the manifest files will be updated with new container infomation like **image name, image tag and deployment file prefix**  
 
-So, here we will write a bash script and include that bash script in Azure devops repo -> vote -> file. so it will do this tasks of updating image information in manifest files from there argocd will take care.
+So, here we will write a bash script and add that bash script in Azure devops repo -> vote -> file. This will do this tasks of updating image information in manifest files, from here argocd will take care.
 
 ```
 #!/bin/bash
@@ -446,6 +447,125 @@ git push
 # Cleanup: remove the temporary directory
 rm -rf /tmp/temp_repo
 ```
+
+## Step12: Update Deployment yaml file
+
+We have to add new stage in deployment yaml file for bash script in vote-service pipeline.
+Go to devops portal -> your project -> pipelines -> choose vote pipeline -> click edit -> add the below script at the bottom of the yaml pipeline.
+
+```
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  paths:
+    include: 
+      - vote/*
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '26be9af5-3b2c-4b0b-a185-443a6868e826'
+  imageRepository: 'vote'
+  containerRegistry: 'projakscon.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/vote/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+  # Agent VM image name
+pool: 
+  name: Abhilash
+  demands:
+  - agent.name -equals projagent
+
+stages:
+- stage: Build
+  displayName: Build the voting app
+  jobs:
+  - job: Build
+    displayName: Build
+    pool: 
+      name: Abhilash
+      demands:
+       - agent.name -equals projagent
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(imageRepository)          
+        command: 'build'
+        Dockerfile: $(dockerfilePath)
+
+- stage: Push                           
+  displayName: Push the Voting App        
+  jobs:
+  - job: Push
+    displayName: Pushing the voting App
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(imageRepository)
+        command: 'push' 
+
+##################################
+######### Add the script below to the vote-service pipeline
+
+- stage: Update_bash_script
+  displayName: update_Bash_script
+  jobs:
+  - job: Updating_repo_with_bash
+    displayName: updating_repo_using_bash_script
+    steps:
+    - task: ShellScript@2
+      inputs:
+        scriptPath: 'vote/updateK8sManifests.sh'
+        args: 'vote $(imageRepository) $(tag)'
+    
+```
+Now, after adding the bash script in pipeline. We will go ahead and test our deployment.
+
+## Step13: Updating Configmap yaml (optional).
+
+NOTE: if the update script runs and not yet updated we can edit the configmap of the argocd to make fetch and deploy updates quicker, run kubectl edit cm argocd-cm -n argocd and add data: timeout-reconciliation to be 10s.
+
+----------------------------------------------------------------------------------------------------
+Example (optional step)
+Edit argocd configmap yaml file kubectl edit cm argocd-cm -n argocd
+Add the data: timeout-reconciliation section and make it look like this
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"argocd-cm","app.kubernetes.io/part-of":"argocd"},"name":"argocd-cm","namespace":"argocd"}}
+  creationTimestamp: "2024-08-26T21:20:54Z"
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-cm
+  namespace: argocd
+  resourceVersion: "7318"
+  uid: 6115ff37-28f1-4c0b-a477-b43f827cbb94
+data:
+  timeout.reconciliation: 10s
+```
+
+<img width="700" height="99" alt="image" src="https://github.com/user-attachments/assets/909c5c6c-47be-415f-8803-eecab326ed87" />
+
+<img width="700" height="185" alt="image" src="https://github.com/user-attachments/assets/228b8a14-f85d-472c-b771-97e3b731a4b8" />
+
+Note: For data.reconciliation in production using 10s is not ideal; the recommended is atleast 180s which is 3mins this is to enable ArgoCD have enough time to update and sync without giving too much pressure to the services.  
+
+## Step14: check pods and troubleshoot for any errors
+
+
+
+
+
 
 
 
