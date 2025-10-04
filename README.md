@@ -201,7 +201,7 @@ To see them go to Azure Portal -> Container Registry -> Service (left side pane)
 
 <img width="1854" height="775" alt="image" src="https://github.com/user-attachments/assets/07baabfc-acc3-4a59-8dae-304eb17351d2" />
 
-## **Step5: Create Azure Kubernetes Service**
+## **Step6: Create Azure Kubernetes Service**
 
 We will create a Azure Kubernetes cluster for deploying our application using ArgoCD.
 
@@ -221,7 +221,7 @@ provide Resource group name, kubernetes cluster name, location (can use default 
 <img width="1124" height="815" alt="image" src="https://github.com/user-attachments/assets/126a7783-8b02-4f0a-bfd2-1e1cd1829056" />
 
 
-## **Step6: Install Azure CLI and setu up AKS using CLI.
+## **Step7: Install Azure CLI and setu up AKS using CLI.
 
 The Azure CLI is a tool we use to manage the Azure resources through command line (terminal).
 Now, login to the linux virtual machine which we have created and install the Azure CLI, just copy and paste the below script and then click enter.
@@ -266,7 +266,7 @@ this command will show you to which aks cluster it is connected.
 
 so, now we have successfully connected to our kubernetes cluster.
 
-## **Step7: Install ArgoCD**
+## **Step8: Install ArgoCD**
 
 we will use a bash script to install argocd.
 the bash script will first creates a namespace and then install argocd in the namespace then it will wait for argocd components to get ready, then it retrieves initail admin password for argocd later it exposes the argocd server to the internet using node port service which we can access via browser (url). and optionally it installs the argocd cli and logs in using the initial admin password.
@@ -327,7 +327,7 @@ How to Use:
 3. Run the script: ./argocd.sh
 4. This will set up Argo CD on your Kubernetes cluster and provide you with the necessary details to access and manage it.
 
-## **Step8: setup port rule for ArgoCD.
+## **Step9: setup port rule for ArgoCD.
 now run this command **kubectl get svc -n argocd** it will list out the services in the kubernetes. from the output we can see the nodeport port number that we should allow in azure vmss networking in inbound port rule then we can access it on the browser by using the IP address of our VM and the port address of port 80 service which is 31436 as shown below.
 
 <img width="700" height="387" alt="image" src="https://github.com/user-attachments/assets/d520f5fe-7bb3-45b6-85ae-2f16fc95ec1d" />
@@ -335,7 +335,7 @@ now run this command **kubectl get svc -n argocd** it will list out the services
 
 <img width="700" height="116" alt="image" src="https://github.com/user-attachments/assets/7e918d5d-535e-4572-96b2-fb825cd744e2" />
 
-## ** Step9: login to the ArgoCD**
+## ** Step10: login to the ArgoCD**
 
 go to browser and with your ip address and port number search it (example: http://52.250.58.123:31436)
 
@@ -371,7 +371,7 @@ afer login, you will see something like this.
 <img width="940" height="475" alt="image" src="https://github.com/user-attachments/assets/45dc738a-1564-42a5-b5f3-033a38b01941" />
 
 
-## **Step10: Configure ArgoCD**
+## **Step11: Configure ArgoCD**
 
 Now we have to configure the ArgoCD, so that it will always obverse the azure repo manifests files. when the configuration is completed it will automatically deploy the manifest files to kubernetes cluster, but then why it still observes it continusly because when there is a new change in application then it will deploy the new changes to cluster automatically. 
 
@@ -412,7 +412,7 @@ now, after deploying we can see the pods are running (UI mode in argocd)
 
 till here we have completed the application deployment to azure kubernetes cluster.
 
-## Step11: **Writing Bash Script**
+## Step12: **Writing Bash Script**
 Now as a devops engineer we need to make this into automation process for future changes to be auto updated, when you run the CI pipeline new containers will be created and pushed into Azure container registry, so then how the manifest files will be updated with new container infomation like **image name, image tag and deployment file prefix**  
 
 So, here we will write a bash script and add that bash script in Azure devops repo -> vote -> file. This will do this tasks of updating image information in manifest files, from here argocd will take care.
@@ -448,7 +448,7 @@ git push
 rm -rf /tmp/temp_repo
 ```
 
-## Step12: Update Deployment yaml file
+## Step13: Update Deployment yaml file
 
 We have to add new stage in deployment yaml file for bash script in vote-service pipeline.
 Go to devops portal -> your project -> pipelines -> choose vote pipeline -> click edit -> add the below script at the bottom of the yaml pipeline.
@@ -527,7 +527,7 @@ stages:
 ```
 Now, after adding the bash script in pipeline. We will go ahead and test our deployment.
 
-## Step13: Updating Configmap yaml (optional).
+## Step14: Updating Configmap yaml (optional).
 
 NOTE: if the update script runs and not yet updated we can edit the configmap of the argocd to make fetch and deploy updates quicker, run kubectl edit cm argocd-cm -n argocd and add data: timeout-reconciliation to be 10s.
 
@@ -560,7 +560,7 @@ data:
 
 Note: For data.reconciliation in production using 10s is not ideal; the recommended is atleast 180s which is 3mins this is to enable ArgoCD have enough time to update and sync without giving too much pressure to the services.  
 
-## Step14: check pods and troubleshoot for any errors
+## Step15: check pods and troubleshoot for any errors
 
 Check the status of pods using command **kubectl get pods** 
 
@@ -575,7 +575,7 @@ You can also check the error in ArgoCD UI
 
 <img width="700" height="385" alt="image" src="https://github.com/user-attachments/assets/e341e23e-5a81-413d-a830-da6c4e7d950a" />
 
-## Step15: Create Imagepullsecret on AKS
+## Step16: Create Imagepullsecret on AKS
 
 Here the Kubernetes is not able to pull the latest changes from Azure container registry hence showing imagepullbackoff error. 
 To resolve this error we need to enable the admin user in azure container registry.
@@ -616,7 +616,7 @@ once you access the page you will see like this.
 
 <img width="700" height="467" alt="image" src="https://github.com/user-attachments/assets/771655b7-5cc4-4e6e-85c9-93b7cff0e2d2" />
 
-## **Step16: Now Lets check the CICD process**
+## **Step17: Now Lets check the CICD process**
 
 go to -> devops -> Repo -> vote -> edit os.getenv section of app.py file. now try to change the votes to something like this (summer, winter) (Rain, Snow) etc. then commit the changes.  
 
