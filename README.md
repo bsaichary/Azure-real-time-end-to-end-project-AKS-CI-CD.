@@ -562,7 +562,120 @@ Note: For data.reconciliation in production using 10s is not ideal; the recommen
 
 ## Step14: check pods and troubleshoot for any errors
 
+Check the status of pods using command **kubectl get pods** 
 
+<img width="681" height="147" alt="image" src="https://github.com/user-attachments/assets/75de10ff-1763-4aed-b0e2-ff137ab7c1c5" />
+
+
+If you see any errors with respect to images like imagepullbackoff. 
+then look for which image is showing the error, then take that image name and run the describe command to get the complete details 
+command **kubectl describe pod <image name>**
+
+You can also check the error in ArgoCD UI 
+
+<img width="700" height="385" alt="image" src="https://github.com/user-attachments/assets/e341e23e-5a81-413d-a830-da6c4e7d950a" />
+
+## Step15: Create Imagepullsecret on AKS
+
+Here the Kubernetes is not able to pull the latest changes from Azure container registry hence showing imagepullbackoff error. 
+To resolve this error we need to enable the admin user in azure container registry.
+Go to -> Azure Portal -> Azure container Registry -> settings -> access key -> check mark the admin user box and then copy the password.
+
+<img width="1881" height="794" alt="image" src="https://github.com/user-attachments/assets/d8c0d12a-ea74-43f5-b046-8b3f25581d6e" />
+
+Now run this command with inserting the details.
+give a 
+secret-name
+namespace
+insert the below details
+container-registry-name
+service-principal-ID
+service-principal-password (password from container registry)
+```
+kubectl create secret docker-registry <secret-name> \
+    --namespace <namespace> \
+    --docker-server=<container-registry-name>.azurecr.io \
+    --docker-username=<service-principal-ID> \
+    --docker-password=<service-principal-password>
+```
+
+<img width="700" height="94" alt="image" src="https://github.com/user-attachments/assets/8a440bf5-cc30-4e53-979f-5164b3ca42c8" />
+
+
+Now go to vote deployment file and add newly created Azure container secret.
+Go to -> Azure devops -> repo -> click k8s-specifications -> edit the vote-deployment.yaml and add the imagepullsecret section inside of it with the name of the secret created earlier then click on commit changes.
+
+<img width="700" height="389" alt="image" src="https://github.com/user-attachments/assets/873d50c9-d821-41a1-a006-6a1d13630312" />
+
+Now run the kubectl get svc command for getting the port number and kubectl get pods to check the status of pods running. 
+To access the page use the same IP address which you have used for accessing the argocd and map it with 3100 port (your port number might differ with mine). and ensure you have allowed this 31000 port number in networking of vmss, as similarly we have done it for argocd port number. (http://<nodeip-address>:31000).
+
+<img width="700" height="119" alt="image" src="https://github.com/user-attachments/assets/196b4276-cf94-4fb0-9ead-a3ea2ee92ad8" />
+
+once you access the page you will see like this.
+
+<img width="700" height="467" alt="image" src="https://github.com/user-attachments/assets/771655b7-5cc4-4e6e-85c9-93b7cff0e2d2" />
+
+## **Step16: Now Lets check the CICD process**
+
+go to -> devops -> Repo -> vote -> edit os.getenv section of app.py file. now try to change the votes to something like this (summer, winter) (Rain, Snow) etc. then commit the changes.  
+
+```
+from flask import Flask, render_template, request, make_response, g
+from redis import Redis
+import os
+import socket
+import random
+import json
+import logging
+option_a = os.getenv('OPTION_A', "Rain")
+option_b = os.getenv('OPTION_B', "Snow")
+hostname = socket.gethostname()
+app = Flask(__name__)
+gunicorn_error_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers.extend(gunicorn_error_logger.handlers)
+app.logger.setLevel(logging.INFO)
+def get_redis():
+    if not hasattr(g, 'redis'):
+        g.redis = Redis(host="redis", db=0, socket_timeout=5)
+    return g.redis
+@app.route("/", methods=['POST','GET'])
+def hello():
+    voter_id = request.cookies.get('voter_id')
+    if not voter_id:
+        voter_id = hex(random.getrandbits(64))[2:-1]
+    vote = None
+    if request.method == 'POST':
+        redis = get_redis()
+        vote = request.form['vote']
+        app.logger.info('Received vote for %s', vote)
+        data = json.dumps({'voter_id': voter_id, 'vote': vote})
+        redis.rpush('votes', data)
+    resp = make_response(render_template(
+        'index.html',
+        option_a=option_a,
+        option_b=option_b,
+        hostname=hostname,
+        vote=vote,
+    ))
+    resp.set_cookie('voter_id', voter_id)
+    return resp
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
+```
+
+after commiting the changes pipeline will auto trigger. 
+
+<img width="700" height="336" alt="image" src="https://github.com/user-attachments/assets/418cc452-724e-4367-8a37-d270dddb5da8" />
+
+Once the pipeline running is completed, go to website and check the changes (refres it) you will see the new changes. 
+
+<img width="700" height="297" alt="image" src="https://github.com/user-attachments/assets/2d0e9b49-f3ce-4dc9-8802-4330a6defed9" />
+
+## The End 
+
+But make sure to do the pipeline for other microservices ((worker and result) also because when you start do it then only you will able to understand.
 
 
 
