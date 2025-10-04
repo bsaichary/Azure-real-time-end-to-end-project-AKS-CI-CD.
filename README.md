@@ -680,6 +680,9 @@ Once the pipeline running is completed, go to website and check the changes (ref
 But make sure to do the pipeline for other microservices ((worker and result) also because when you start do it then only you will able to understand.
 
 **The project is originally from NotHarshhaa**
-I would like to convey my heartfull thanks to NotHarshhaa for the project, because i have learned from this project. and I have used some of his images in this project. but I have used it only for the purpose of Learning and try to provide my version of this project. Anyway guys try to do this project completely and if you get any errors get stop there i know it will take time but use ai tools for fast resolution, for freshers, developer who are willing to come to devops field this project will definitly give you lot of knowledge and hands on experience. 
+
+I would like to convey my heartfull thanks to NotHarshhaa for the project, because i have learned from this project. and I have used some of his images in this project aswell. but I have used it only for the purpose of Learning and I have provided my version of this project. 
+
+Anyway guys try to do this project completely and if you get any errors get stop there i know it will take time but use ai tools (chatgpt or copilot) for faster resolution, and for freshers, developer who are willing to come to devops field this project will definitly give you lot of knowledge and hands on experience. 
 
 Good Luck - Have a Great Learning.
