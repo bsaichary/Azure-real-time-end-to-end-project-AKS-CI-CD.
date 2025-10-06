@@ -96,7 +96,7 @@ First we will create a linux virtual machine then we will setup the self hosted 
 Steps to create vm use this link https://github.com/bsaichary/Azure-Linux-Virtual-Machine-Creation-detail-guide/blob/main/README.md 
 
 
-after creation of virtual machine, setting up selfhost agent and installing docker follow step5.
+after completing the creation of virtual machine, setting up selfhost agent and installing docker then go on to follow step5.
 
 ## **Step5: Building CI Pipeline in azure devops
 
